@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,31 +19,24 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { Trash2, Eye, UserPlus, Search } from "lucide-react"
+import { Trash2, Eye, UserPlus, Search, FolderPlus } from "lucide-react"
 import { PRODUCT_CATEGORY_LABELS } from "@/lib/constants"
+import Link from "next/link"
 
 export function ProductsCatalog({ userRole }: { userRole: string }) {
   const router = useRouter()
   const [products, setProducts] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
-  const [customers, setCustomers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   
   // Filters
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  
-  // Assignment dialog
-  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
-  const [selectedCustomer, setSelectedCustomer] = useState("")
-  const [assignmentNotes, setAssignmentNotes] = useState("")
 
   useEffect(() => {
     fetchProducts()
     fetchCategories()
-    fetchCustomers()
   }, [])
 
   useEffect(() => {
@@ -86,54 +78,6 @@ export function ProductsCatalog({ userRole }: { userRole: string }) {
     }
   }
 
-  const fetchCustomers = async () => {
-    try {
-      const response = await fetch("/api/customers", {
-        credentials: "include",
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setCustomers(data)
-      }
-    } catch (error) {
-      console.error("Failed to fetch customers:", error)
-    }
-  }
-
-  const handleAssignProduct = async () => {
-    if (!selectedProduct || !selectedCustomer) {
-      toast.error("Please select a customer")
-      return
-    }
-
-    try {
-      const response = await fetch(`/api/catalog/products/${selectedProduct.id}/assign`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          customer_id: selectedCustomer,
-          notes: assignmentNotes,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        toast.success("Product assigned successfully")
-        setIsAssignDialogOpen(false)
-        setSelectedProduct(null)
-        setSelectedCustomer("")
-        setAssignmentNotes("")
-        fetchProducts()
-      } else {
-        toast.error(data.message || "Failed to assign product")
-      }
-    } catch (error) {
-      toast.error("Failed to assign product")
-    }
-  }
-
   const handleDeleteProduct = async (productId: string, productName: string) => {
     try {
       const response = await fetch(`/api/catalog/products/${productId}`, {
@@ -154,11 +98,6 @@ export function ProductsCatalog({ userRole }: { userRole: string }) {
       console.error("[v0] Error deleting product:", error)
       toast.error("An error occurred while deleting product")
     }
-  }
-
-  const openAssignDialog = (product: any) => {
-    setSelectedProduct(product)
-    setIsAssignDialogOpen(true)
   }
 
   const getStatusColor = (status: string) => {
