@@ -11,3 +11,4 @@ export { default as CustomerAgentAssignment, type ICustomerAgentAssignment } fro
 export { default as Notification, type INotification } from "./Notification"
 export { default as SMSLog, type ISMSLog } from "./SMSLog"
 export { default as Counter, getNextSequence } from "./Counter"
+export { default as ProductRequest, type IProductRequest } from "./ProductRequest"

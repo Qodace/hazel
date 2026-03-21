@@ -211,15 +211,16 @@ export function ProductsCatalog({ userRole }: { userRole: string }) {
                         <Eye size={16} />
                         View
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-2 bg-transparent"
-                        onClick={() => openAssignDialog(product)}
-                      >
-                        <UserPlus size={16} />
-                        Assign
-                      </Button>
+                      <Link href={`/team/products/${product.id}/assign`}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-2 bg-transparent"
+                        >
+                          <UserPlus size={16} />
+                          Assign
+                        </Button>
+                      </Link>
                       {userRole === "super_admin" && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -256,48 +257,6 @@ export function ProductsCatalog({ userRole }: { userRole: string }) {
         )}
       </CardContent>
 
-      {/* Assign Product Dialog */}
-      <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Assign Product to Customer</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {selectedProduct && (
-              <div className="p-3 bg-muted rounded-md">
-                <p className="font-medium">{selectedProduct.name}</p>
-                <p className="text-sm text-muted-foreground">{selectedProduct.product_code}</p>
-              </div>
-            )}
-            <div>
-              <label className="text-sm font-medium">Customer</label>
-              <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select customer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {customers.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.company_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Notes (optional)</label>
-              <Input
-                placeholder="Assignment notes..."
-                value={assignmentNotes}
-                onChange={(e) => setAssignmentNotes(e.target.value)}
-              />
-            </div>
-            <Button onClick={handleAssignProduct} className="w-full">
-              Assign Product
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </Card>
+      </Card>
   )
 }
